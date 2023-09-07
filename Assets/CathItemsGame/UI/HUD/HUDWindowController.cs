@@ -22,14 +22,14 @@ namespace CatchItemsGame
             _hudWindowWindow.ChangeHealthBar(healthPoint);
         }
         
-        public void ChangeScore(int score)
+        public void ChangePlayerScore(int score)
         {
             _hudWindowWindow.ChangeScoreText(score);
         }
         
         public void SetParameters(int score = 0, float healthPoint = 100f)
         {
-            ChangeScore(score);
+            ChangePlayerScore(score);
             
             healthPoint = ChekHPPoint(healthPoint);
             _hudWindowWindow.ChangeHealthBar(healthPoint);

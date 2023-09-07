@@ -1,13 +1,13 @@
 ﻿namespace CatchItemsGame
 {
-    public class UIMainMenuController
+    public class UIMainMenuWindowController
     {
         private readonly UIService _uiService;
         
         private UIMainMenuWindow _mainMenuWindow;
         private GameController _gameController;
 
-        public UIMainMenuController(UIService uiService, GameController gameController)
+        public UIMainMenuWindowController(UIService uiService, GameController gameController)
         {
             _uiService = uiService;
             _gameController = gameController;

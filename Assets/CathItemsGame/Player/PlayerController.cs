@@ -23,7 +23,7 @@ namespace CatchItemsGame
         private PlayerStorage _playerStorage;
         private PlayerMovementController _playerMovementController;
         private PlayerAnimator _playerAnimator;
-        private UnityEngine.Camera _camera;
+        private Camera _camera;
         
         private float _currentHealth;
         private float _currentSpeed;
@@ -31,7 +31,7 @@ namespace CatchItemsGame
         public PlayerController(
             InputController inputController,
             HUDWindowController hudWindowController,
-            UnityEngine.Camera camera,
+            Camera camera,
             SoundController soundController)
         {
             _soundController = soundController;
@@ -43,7 +43,6 @@ namespace CatchItemsGame
           
             _inputController = inputController;
             _camera = camera;
-            
             
             _playerStorage = new PlayerStorage();
             _factoryPlayer = new FactoryPlayer();

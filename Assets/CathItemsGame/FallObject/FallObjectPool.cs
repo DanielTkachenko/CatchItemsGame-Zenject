@@ -6,16 +6,16 @@ namespace CatchItemsGame
     public class FallObjectPool
     {
         private readonly FallObjectFactory _factory;
-        private readonly ScoreCounter _scoreCounter;
+        private readonly PlayerScoreCounter _playerScoreCounter;
 
         private Dictionary<FallObjectView, FallObjectController> _pool;
 
         private GameObject _container; 
 
-        public FallObjectPool(FallObjectFactory factory, ScoreCounter scoreCounter)
+        public FallObjectPool(FallObjectFactory factory, PlayerScoreCounter playerScoreCounter)
         {
             _factory = factory;
-            _scoreCounter = scoreCounter;
+            _playerScoreCounter = playerScoreCounter;
             _pool = new Dictionary<FallObjectView, FallObjectController>();
             _container = new GameObject("FallObjects");
         }
@@ -36,7 +36,7 @@ namespace CatchItemsGame
             view.transform.parent = _container.transform;
             controller.ObjectFellNotify += (FallObjectController) => ReturnToPool(view);
             controller.DeathAnimationEndedNotify += (FallObjectController) => ReturnToPool(view);
-            controller.PlayerCatchFallingObjectNotify += _scoreCounter.PlayerCatchFallObjectEventHandler;
+            controller.PlayerCatchFallingObjectNotify += _playerScoreCounter.PlayerCatchFallObjectEventHandler;
             
             _pool.Add(view, controller);
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CatchItemsGame
 {
-    public class ScoreCounter
+    public class PlayerScoreCounter
     {
         public event Action<int> ScoreChangeNotify;
         public int Score => _score;
@@ -12,7 +12,7 @@ namespace CatchItemsGame
 
         private int _score = 0;
 
-        public ScoreCounter(SoundController soundController)
+        public PlayerScoreCounter(SoundController soundController)
         {
             _soundController = soundController;
         }

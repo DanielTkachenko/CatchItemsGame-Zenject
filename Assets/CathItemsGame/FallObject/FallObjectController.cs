@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CatchItemsGame
@@ -10,25 +11,26 @@ namespace CatchItemsGame
         public event Action<FallObjectController> DeathAnimationEndedNotify;
         public event Action<FallObjectController> ObjectFellNotify;
         public int PointsPerObject => _pointsPerObject;
-        public FallObjectView View => _view;
-        public FallObjectModel Model => _model;
+        //public FallObjectView View => _view;
+        //public FallObjectModel Model => _model;
         public int Damage => _damage;
 
         private Vector3 _defaultScale = new Vector3(0.15f, 0.15f, 0.15f);
         private Vector3 _deltaVector = new Vector3(0, -0.001f, 0);
         private FallObjectAnimator _animator;
-        private FallObjectView _view;
-        private FallObjectModel _model;
+        //private FallObjectView _view;
+        //private FallObjectModel _model;
         private int _pointsPerObject;
         private float _minPositionY = -7f;
         private float _fallSpeed;
         private int _damage;
         private bool _isCatched;
 
+        private FallObjectConfig _fallObjectConfig;
+        private List<FallObjectView> _views;
 
-        public FallObjectController(
-            FallObjectView view,
-            FallObjectModel model)
+
+        public FallObjectController()
         {
             _model = model;
             _pointsPerObject = model.PointsPerObject;

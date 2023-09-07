@@ -8,7 +8,7 @@ namespace CatchItemsGame
     {
         public FallObjectPool Pool => _pool;
 
-        private readonly ScoreCounter _scoreCounter;
+        private readonly PlayerScoreCounter _playerScoreCounter;
         private readonly FallObjectPool _pool;
         private readonly float _spawnPeriodMin;
         private readonly float _spawnPeriodMax;
@@ -21,7 +21,7 @@ namespace CatchItemsGame
         private float _timer;
         private int _typesCount;
 
-        public FallObjectSpawner(ScoreCounter scoreCounter)
+        public FallObjectSpawner(PlayerScoreCounter playerScoreCounter)
         {
             var spawnerConfig = Resources.Load<FallObjectSpawnConfig>(ResourcesConst.FallObjectSpawnConfig);
             _positionY = spawnerConfig.PositionY;
@@ -32,7 +32,7 @@ namespace CatchItemsGame
             _delayStartSpawn = spawnerConfig.DelayStartSpawn;
             _spawnPosition = new Vector2(Random.Range(_minPositionX, _maxPositionX), _positionY);
 
-            _pool = new FallObjectPool(new FallObjectFactory(), scoreCounter);
+            _pool = new FallObjectPool(new FallObjectFactory(), playerScoreCounter);
             _spawnPeriod = Random.Range(_spawnPeriodMin, _spawnPeriodMax);
             _typesCount = Enum.GetValues(typeof(FallObjectType)).Length;
         }
