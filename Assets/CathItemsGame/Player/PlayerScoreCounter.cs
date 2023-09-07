@@ -12,24 +12,26 @@ namespace CatchItemsGame
 
         private int _score = 0;
 
-        public PlayerScoreCounter(SoundController soundController)
+        public PlayerScoreCounter(
+            SoundController soundController)
         {
             _soundController = soundController;
+
+            FallObjectController.ScoresToPlayerNotify += AddScores;
         }
     
-        public void PlayerCatchFallObjectEventHandler(FallObjectController controller)
+        public void AddScores(int amount)
         {
             _soundController.Play(SoundName.Buff1);
-            _score += controller.PointsPerObject;
+            _score += amount;
             ScoreChangeNotify?.Invoke(_score);
         }        
 
-        public void ObjectFellEventHandler(FallObjectController controller)
+        public void ReduceScores(int amount)
         {
             _soundController.Play(SoundName.GetDamage);
-        
-            _score -= controller.Damage;
-            ScoreChangeNotify?.Invoke(controller.Damage);
+            _score -= amount;
+            ScoreChangeNotify?.Invoke(_score);
         }
     }
 }
