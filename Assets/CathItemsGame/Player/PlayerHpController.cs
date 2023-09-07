@@ -13,7 +13,9 @@ namespace CatchItemsGame
     
         private float _health;
         
-        public PlayerHpController(float health, SoundController soundController)
+        public PlayerHpController(
+            float health,
+            SoundController soundController)
         {
             _health = health;
             _soundController = soundController;

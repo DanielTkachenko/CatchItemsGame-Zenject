@@ -20,11 +20,14 @@ namespace CatchItemsGame.Installers
 
             Container.Bind<InputController>().AsSingle().NonLazy();
             Container.Bind<PlayerController>().AsSingle().NonLazy();
-            Container.Bind<FallObjectSpawner>().AsSingle().NonLazy();
+            Container.Bind<FallObjectSpawner>().AsSingle();
             Container.Bind<PlayerScoreCounter>().AsSingle().NonLazy();
             Container.Bind<TickableManager>().FromComponentInNewPrefabResource("TickableManager").AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<GameController>().AsSingle().NonLazy();
+
+            Container.Bind<FallObjectController>().AsSingle().NonLazy();
+            Container.BindMemoryPool<FallObjectView, FallObjectView.Pool>().WithInitialSize(10).FromComponentInNewPrefabResource("FallObject");
         }
     }
 }

@@ -7,92 +7,82 @@ namespace CatchItemsGame
     public class FallObjectController
     {
         public static event Action<float> DamageToPlayerNotify;
-        public event Action<FallObjectController> PlayerCatchFallingObjectNotify;
-        public event Action<FallObjectController> DeathAnimationEndedNotify;
-        public event Action<FallObjectController> ObjectFellNotify;
-        public int PointsPerObject => _pointsPerObject;
-        //public FallObjectView View => _view;
-        //public FallObjectModel Model => _model;
-        public int Damage => _damage;
-
-        private Vector3 _defaultScale = new Vector3(0.15f, 0.15f, 0.15f);
-        private Vector3 _deltaVector = new Vector3(0, -0.001f, 0);
+        public static event Action<int> ScoresToPlayerNotify;
+        
         private FallObjectAnimator _animator;
-        //private FallObjectView _view;
-        //private FallObjectModel _model;
-        private int _pointsPerObject;
-        private float _minPositionY = -7f;
-        private float _fallSpeed;
-        private int _damage;
-        private bool _isCatched;
-
         private FallObjectConfig _fallObjectConfig;
         private List<FallObjectView> _views;
+        private FallObjectView.Pool _objectPool;
+        
+        private Vector3 _deltaVector = new Vector3(0, -0.001f, 0);
+        private float _minPositionY = -7f;
 
 
-        public FallObjectController()
+        public FallObjectController(
+            FallObjectView.Pool objectPool
+        )
         {
-            _model = model;
-            _pointsPerObject = model.PointsPerObject;
-            _fallSpeed = model.FallSpeed;
-            _damage = model.Damage;
-
-            _view = view;
-            _view.transform.localScale = _defaultScale;
+            _views = new List<FallObjectView>();
+            _fallObjectConfig = Resources.Load<FallObjectConfig>("FallObjectConfig");
+            _objectPool = objectPool;
             
             _animator = new FallObjectAnimator(this);
-            _animator.Spawn();
-            _animator.DeathAnimationEnded += () => DeathAnimationEndedNotify?.Invoke(this);
-            PlayerCatchFallingObjectNotify += (controller) => _animator.Death();
-            
-            _view.OnCollisionEnter2DNotify += OnCollisionEnter2D;
+            _animator.DeathAnimationEnded += Destroy;
+
+            TickableManager.FixedUpdateNotify += FixedUpdate;
         }
 
-        void OnCollisionEnter2D(Collision2D collision2D)
+        public FallObjectView Create(Vector3 position, FallObjectType type)
+        {
+            var model = _fallObjectConfig.Get(type);
+            var view = _objectPool.Spawn(position, model);
+
+            _views.Add(view);
+            view.OnCollisionEnter2DNotify += OnCollisionEnter2D;
+            
+            _animator.Spawn(view);
+
+            return view;
+        }
+
+        public void DestroyAll()
+        {
+            foreach (var view in _views)
+            {
+                _objectPool.Despawn(view);
+            }
+            _views.Clear();
+        }
+
+        public void Destroy(FallObjectView view)
+        {
+            _objectPool.Despawn(view);
+            _views.Remove(view);
+        }
+
+        void OnCollisionEnter2D(FallObjectView view, Collision2D collision2D)
         {
             var player = collision2D.gameObject.GetComponent<PlayerView>();
 
-            if (player != null && !_isCatched)
+            if (player != null)
             {
-                PlayerCatchFallingObjectNotify?.Invoke(this);
-                _isCatched = true;
+                _animator.Death(view);
             }
         }
 
         private void FixedUpdate()
         {
-            if (_view.transform.position.y <= _minPositionY)
+            foreach (var view in _views)
             {
-                ObjectFellNotify?.Invoke(this);
-                DamageToPlayerNotify?.Invoke(_damage);
-            }
+                if (view.transform.position.y <= _minPositionY)
+                {
+                    var damage = _fallObjectConfig.Get(view.ObjectType).Damage;
+                    DamageToPlayerNotify?.Invoke(damage);
+                }
 
-            _view.transform.position += _deltaVector * _fallSpeed;
-        }
-
-        public void SetActive(bool value)
-        {
-            if (value == true)
-            {
-                TickableManager.FixedUpdateNotify += FixedUpdate;
-                
+                view.transform.position += _deltaVector * view.FallSpeed;
             }
-            else
-            {
-                TickableManager.FixedUpdateNotify -= FixedUpdate;
-            }
-
-            _view.transform.localScale = _defaultScale;
-            View.gameObject.SetActive(value);
-            _isCatched = !value;
-        }
-        
-        public void SetModel(FallObjectModel model)
-        {
-            _pointsPerObject = model.PointsPerObject;
-            _fallSpeed = model.FallSpeed;
-            _damage = model.Damage;
-            _view.SpriteRenderer.sprite = model.ObjectSprite;
+            
         }
     }
 }

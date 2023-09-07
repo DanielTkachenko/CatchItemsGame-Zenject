@@ -6,10 +6,8 @@ namespace CatchItemsGame
 {
     public class FallObjectSpawner
     {
-        public FallObjectPool Pool => _pool;
-
-        private readonly PlayerScoreCounter _playerScoreCounter;
-        private readonly FallObjectPool _pool;
+        private readonly PlayerScoreCounter _scoreCounter;
+        private readonly FallObjectController _fallObjectController;
         private readonly float _spawnPeriodMin;
         private readonly float _spawnPeriodMax;
         private readonly float _minPositionX;
@@ -21,7 +19,9 @@ namespace CatchItemsGame
         private float _timer;
         private int _typesCount;
 
-        public FallObjectSpawner(PlayerScoreCounter playerScoreCounter)
+        public FallObjectSpawner(
+            PlayerScoreCounter scoreCounter,
+            FallObjectController fallObjectController)
         {
             var spawnerConfig = Resources.Load<FallObjectSpawnConfig>(ResourcesConst.FallObjectSpawnConfig);
             _positionY = spawnerConfig.PositionY;
@@ -32,7 +32,7 @@ namespace CatchItemsGame
             _delayStartSpawn = spawnerConfig.DelayStartSpawn;
             _spawnPosition = new Vector2(Random.Range(_minPositionX, _maxPositionX), _positionY);
 
-            _pool = new FallObjectPool(new FallObjectFactory(), playerScoreCounter);
+            _fallObjectController = fallObjectController;
             _spawnPeriod = Random.Range(_spawnPeriodMin, _spawnPeriodMax);
             _typesCount = Enum.GetValues(typeof(FallObjectType)).Length;
         }
@@ -46,7 +46,7 @@ namespace CatchItemsGame
         public void StopSpawn()
         {
             TickableManager.UpdateNotify -= Update;
-            Pool.AllReturnToPool();
+            _fallObjectController.DestroyAll();
         }
 
         private void Update()
@@ -67,9 +67,11 @@ namespace CatchItemsGame
         private void SpawnNewObject()
         {
             var type = Random.Range(0, _typesCount);
-            var newObject = _pool.CreateObject((FallObjectType)type);
             _spawnPosition.x = Random.Range(_minPositionX, _maxPositionX);
-            newObject.gameObject.transform.position = _spawnPosition;
+            if (_fallObjectController != null)
+            {
+                _fallObjectController.Create(_spawnPosition, (FallObjectType)type);
+            }
         }
     }
 }
