@@ -44,6 +44,7 @@ namespace CatchItemsGame
     public struct FallObjectModel
     {
         public FallObjectType Type;
+        public Vector3 DefaultScale;
         public int PointsPerObject;
         public int Damage;
         public float FallSpeed;

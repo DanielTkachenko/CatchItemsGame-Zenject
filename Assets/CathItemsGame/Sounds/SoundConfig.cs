@@ -7,9 +7,9 @@ namespace CatchItemsGame
     [CreateAssetMenu(fileName = "SoundConfig", menuName = "Configs/SoundConfig", order = 1)]
     public class SoundConfig : ScriptableObject
     {
-        [SerializeField] private SoundModels[] soundModels;
+        [SerializeField] private SoundModel[] soundModels;
         
-        private Dictionary<SoundName, AudioClip> _dict = new();
+        private Dictionary<SoundName, SoundModel> _dict = new();
         
         [NonSerialized] private bool _inited;
 
@@ -17,12 +17,12 @@ namespace CatchItemsGame
         {
             foreach (var model in soundModels)
             {
-                _dict.Add(model.Name, model.Clip);
+                _dict.Add(model.Name, model);
             }
             _inited = true;
         }
 
-        public AudioClip Get(SoundName soundName)
+        public SoundModel Get(SoundName soundName)
         {
             if (!_inited)
             {
@@ -53,9 +53,11 @@ namespace CatchItemsGame
     }
 
     [Serializable]
-    public struct SoundModels
+    public struct SoundModel
     {
         public SoundName Name;
         public AudioClip Clip;
+        public float Volume;
+        public bool Loop;
     }
 }

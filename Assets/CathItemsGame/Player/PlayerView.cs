@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Zenject;
 
 namespace CatchItemsGame
 {
@@ -7,5 +8,9 @@ namespace CatchItemsGame
         public SpriteRenderer SpriteRenderer => spriteRenderer;
         
         [SerializeField] private SpriteRenderer spriteRenderer;
+
+        public class Factory : PlaceholderFactory<PlayerView>
+        {
+        }
     }
 }

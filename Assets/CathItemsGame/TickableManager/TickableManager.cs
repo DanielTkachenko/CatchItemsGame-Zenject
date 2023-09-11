@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace CatchItemsGame
 {
+    
     public class TickableManager : MonoBehaviour
     {
         public static event Action UpdateNotify;
@@ -18,4 +19,5 @@ namespace CatchItemsGame
             FixedUpdateNotify?.Invoke();
         }
     }
+    
 }

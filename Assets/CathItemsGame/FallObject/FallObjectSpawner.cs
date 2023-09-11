@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
+using Zenject;
 using Random = UnityEngine.Random;
 
 namespace CatchItemsGame
 {
-    public class FallObjectSpawner
+    public class FallObjectSpawner : ITickable
     {
         private readonly PlayerScoreCounter _scoreCounter;
         private readonly FallObjectController _fallObjectController;
@@ -19,11 +20,14 @@ namespace CatchItemsGame
         private float _timer;
         private int _typesCount;
 
+        private bool isActive;
+
         public FallObjectSpawner(
             PlayerScoreCounter scoreCounter,
-            FallObjectController fallObjectController)
+            FallObjectController fallObjectController,
+            FallObjectSpawnConfig fallObjectSpawnConfig)
         {
-            var spawnerConfig = Resources.Load<FallObjectSpawnConfig>(ResourcesConst.FallObjectSpawnConfig);
+            var spawnerConfig = fallObjectSpawnConfig;
             _positionY = spawnerConfig.PositionY;
             _minPositionX = spawnerConfig.MinPositionX;
             _maxPositionX = spawnerConfig.MaxPositionX;
@@ -39,27 +43,31 @@ namespace CatchItemsGame
 
         public void StartSpawn()
         {
+            isActive = true;
             _spawnPeriod = 6.5f;
-            TickableManager.UpdateNotify += Update;
+            _fallObjectController.StartGame();
         }
 
         public void StopSpawn()
         {
-            TickableManager.UpdateNotify -= Update;
-            _fallObjectController.DestroyAll();
+            isActive = false;
+            _fallObjectController.StopGame();
         }
 
-        private void Update()
+        public void Tick()
         {
-            _spawnPeriod -= Time.deltaTime;
-            _timer += Time.deltaTime;
-            
-            if (_timer > _delayStartSpawn)
+            if (isActive)
             {
-                if (_spawnPeriod <= 0)
+                _spawnPeriod -= Time.deltaTime;
+                _timer += Time.deltaTime;
+            
+                if (_timer > _delayStartSpawn)
                 {
-                    SpawnNewObject();
-                    _spawnPeriod = Random.Range(_spawnPeriodMin, _spawnPeriodMax);
+                    if (_spawnPeriod <= 0)
+                    {
+                        SpawnNewObject();
+                        _spawnPeriod = Random.Range(_spawnPeriodMin, _spawnPeriodMax);
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace CatchItemsGame
 {
@@ -17,19 +18,21 @@ namespace CatchItemsGame
         private Vector3 _deltaVector = new Vector3(0, -0.001f, 0);
         private float _minPositionY = -7f;
 
+        private bool isActive;
+
 
         public FallObjectController(
-            FallObjectView.Pool objectPool
+            FallObjectView.Pool objectPool,
+            FallObjectConfig fallObjectConfig
         )
         {
-            _views = new List<FallObjectView>();
-            _fallObjectConfig = Resources.Load<FallObjectConfig>("FallObjectConfig");
+            TickableManager.FixedUpdateNotify += Tick;
+            _fallObjectConfig = fallObjectConfig;
             _objectPool = objectPool;
             
+            _views = new List<FallObjectView>();
             _animator = new FallObjectAnimator(this);
             _animator.DeathAnimationEnded += Destroy;
-
-            TickableManager.FixedUpdateNotify += FixedUpdate;
         }
 
         public FallObjectView Create(Vector3 position, FallObjectType type)
@@ -45,12 +48,27 @@ namespace CatchItemsGame
             return view;
         }
 
-        public void DestroyAll()
+        public void StartGame()
+        {
+            isActive = true;
+        }
+
+        public void StopGame()
+        {
+            isActive = false;
+            DestroyAll();
+        }
+
+        private void DestroyAll()
         {
             foreach (var view in _views)
             {
-                _objectPool.Despawn(view);
+                if (view.gameObject.activeInHierarchy)
+                {
+                    _objectPool.Despawn(view);
+                }
             }
+            
             _views.Clear();
         }
 
@@ -67,22 +85,25 @@ namespace CatchItemsGame
             if (player != null)
             {
                 _animator.Death(view);
+                var points = _fallObjectConfig.Get(view.ObjectType).PointsPerObject;
+                ScoresToPlayerNotify?.Invoke(points);
             }
         }
-
-        private void FixedUpdate()
+        
+        public void Tick()
         {
-            foreach (var view in _views)
+            for (int i = 0; i < _views.Count; i++)
             {
+                var view = _views[i];
+                view.transform.position += _deltaVector * view.FallSpeed;
                 if (view.transform.position.y <= _minPositionY)
                 {
                     var damage = _fallObjectConfig.Get(view.ObjectType).Damage;
                     DamageToPlayerNotify?.Invoke(damage);
+                    _objectPool.Despawn(view);
+                    _views.Remove(view);
                 }
-
-                view.transform.position += _deltaVector * view.FallSpeed;
             }
-            
         }
     }
 }

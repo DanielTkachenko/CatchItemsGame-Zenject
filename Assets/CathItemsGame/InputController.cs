@@ -13,7 +13,7 @@ namespace CatchItemsGame
         {
             TickableManager.UpdateNotify += CheckInput;
         }
-
+        
         private void CheckInput()
         {
             if (Input.GetKey(KeyCode.LeftArrow))

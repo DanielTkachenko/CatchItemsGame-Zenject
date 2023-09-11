@@ -26,6 +26,8 @@ namespace CatchItemsGame
         public void ReduceHealth(float damage)
         {
             _health -= damage;
+            
+            Debug.Log(_health);
         
             _soundController.Play(SoundName.GetDamage);
             OnHealthChanged?.Invoke(_health);

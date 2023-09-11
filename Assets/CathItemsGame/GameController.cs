@@ -38,27 +38,22 @@ namespace CatchItemsGame
         {
             _uiService.Show<UIMainMenuWindow>();
             
-            _soundController.Play(SoundName.BackStart, loop:true);
+            _soundController.Play(SoundName.BackStart);
         }
 
         public void StartGame()
         {
             _soundController.Stop();
-            _soundController.Play(SoundName.BackMain, loop:true);
+            _soundController.Play(SoundName.BackMain);
             
             _playerController.Spawn();
             _fallObjectSpawner.StartSpawn();
-            TickableManager.UpdateNotify += Update;
         }
 
         public void StopGame()
         {
             _playerController.DestroyView(()=>_gameWindowController.ShowEndMenuWindow());
             _fallObjectSpawner.StopSpawn();
-            TickableManager.UpdateNotify -= Update;
         }
-
-        private void Update()
-        { }
     }
 }

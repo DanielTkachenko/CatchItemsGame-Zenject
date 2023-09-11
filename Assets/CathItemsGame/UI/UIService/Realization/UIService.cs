@@ -15,10 +15,11 @@ namespace CatchItemsGame
 
         private const string UISource = "";
         
-        public UIService(Camera camera)
+        public UIService(
+            Camera camera,
+            UIRoot uiRoot)
         {
-            _uIRoot = Resources.Load<UIRoot>("UIRoot");
-            _uIRoot = Object.Instantiate(_uIRoot);
+            _uIRoot = uiRoot;
             _uIRoot.RootCanvas.worldCamera = camera;
 
             LoadWindows(UISource);

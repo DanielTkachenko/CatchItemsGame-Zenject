@@ -2,18 +2,22 @@ namespace CatchItemsGame
 {
     public class SoundController
     {
-        private SoundPool _soundPool;
+        private SoundView.Pool _soundPool;
+        private SoundConfig _soundConfig;
 
-        public SoundController()
+        public SoundController(
+            SoundView.Pool soundPool,
+            SoundConfig soundConfig)
         {
-            _soundPool = new SoundPool();
+            _soundPool = soundPool;
+            _soundConfig = soundConfig;
         }
         
-        public void Play(SoundName soundName, float volume = 1, bool loop = false)
+        public void Play(SoundName soundName)
         {
             SwitchOff();
-            
-            var sound = _soundPool.TakeFromPool(soundName, volume, loop);
+            var model = _soundConfig.Get(soundName);
+            var sound = _soundPool.Spawn(model);
             sound.AudioSource.Play();
         }
 
