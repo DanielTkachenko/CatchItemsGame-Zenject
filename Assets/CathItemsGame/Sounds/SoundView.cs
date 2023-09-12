@@ -20,7 +20,6 @@ namespace CatchItemsGame
             }
             protected override void OnCreated(SoundView item)
             {
-                //base.OnCreated(item);
                 _views.Add(item);
             }
 
@@ -42,7 +41,6 @@ namespace CatchItemsGame
             {
                 foreach (var soundView in _views)
                 {
-                    
                     if (!soundView.AudioSource.isPlaying && soundView.gameObject.activeInHierarchy)
                     {
                         Despawn(soundView);

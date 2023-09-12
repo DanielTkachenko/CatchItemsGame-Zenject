@@ -19,6 +19,12 @@ namespace CatchItemsGame
 
             FallObjectController.ScoresToPlayerNotify += AddScores;
         }
+
+        public void SetScores(int amount = 0)
+        {
+            _score = amount;
+            ScoreChangeNotify?.Invoke(_score);
+        }
     
         public void AddScores(int amount)
         {

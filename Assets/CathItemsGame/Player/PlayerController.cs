@@ -55,6 +55,8 @@ namespace CatchItemsGame
             _playerAnimator = new PlayerAnimator(_playerView, _camera);
             _playerAnimator.Spawn();
             _playerMovementController = new PlayerMovementController(_inputController, _playerView, this);
+            _playerHpController.SetHealth(_playerConfig.PlayerModel.Health);
+            _playerScoreCounter.SetScores();
             
             return _playerView;
         }
@@ -74,7 +76,7 @@ namespace CatchItemsGame
             _soundController.Play(SoundName.GameOver);
 
             _playerAnimator.Death(setEndWindow);
-            Object.Destroy(_playerView.gameObject, DelayDestroyPlayer);
+            Zenject.GameObjectContext.Destroy(_playerView.gameObject, DelayDestroyPlayer);
             _playerView = null;
         }
     }

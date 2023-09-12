@@ -10,11 +10,11 @@ namespace CatchItemsGame
         public event Action<FallObjectView, Collision2D> OnCollisionEnter2DNotify;
         
         public SpriteRenderer SpriteRenderer => spriteRenderer;
-        public float FallSpeed => _fallSpeed;
         public FallObjectType ObjectType => _objectType;
-
-        [SerializeField] private SpriteRenderer spriteRenderer;
+        public float FallSpeed => _fallSpeed;
+        public bool isCatched;
         
+        [SerializeField] private SpriteRenderer spriteRenderer;
         private float _fallSpeed;
         private FallObjectType _objectType;
 
@@ -38,6 +38,7 @@ namespace CatchItemsGame
             protected override void OnDespawned(FallObjectView item)
             {
                 item.gameObject.SetActive(false);
+                item.isCatched = false;
             }
 
             protected override void OnSpawned(FallObjectView item)

@@ -6,9 +6,16 @@ namespace CatchItemsGame.Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<SoundConfig>().FromResource(ResourcesConst.SoundConfig).AsSingle().NonLazy();
-            Container.Bind<SoundController>().AsSingle().NonLazy();
-            Container.BindMemoryPool<SoundView, SoundView.Pool>().FromComponentInNewPrefabResource(ResourcesConst.SoundView);
+            Container.Bind<SoundConfig>()
+                .FromResource(ResourcesConst.SoundConfig)
+                .AsSingle()
+                .NonLazy();
+            Container.Bind<SoundController>()
+                .AsSingle()
+                .NonLazy();
+            Container.BindMemoryPool<SoundView, SoundView.Pool>()
+                .FromComponentInNewPrefabResource(ResourcesConst.SoundView)
+                .UnderTransformGroup("SoundPool");
         }
     }
 }

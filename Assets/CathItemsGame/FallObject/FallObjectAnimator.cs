@@ -21,7 +21,7 @@ namespace CatchItemsGame
             _fallObjectController = fallObjectController;
         }
 
-        public void Spawn(FallObjectView view)
+        public void SpawnAnimation(FallObjectView view)
         {
             _sequenceSpawn?.Kill();
 
@@ -34,7 +34,7 @@ namespace CatchItemsGame
                 .SetEase(Ease.Linear));
         }
 
-        public void Death(FallObjectView view)
+        public void DeathAnimation(FallObjectView view)
         {
             _sequenceDeath?.Kill();
 

@@ -1,20 +1,16 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 
 namespace CatchItemsGame
 {
-    public class InputController
+    public class InputController : ITickable
     {
         public event Action OnLeftEvent;
         public event Action OnRightEvent;
-
-        public InputController()
-        {
-            TickableManager.UpdateNotify += CheckInput;
-        }
         
-        private void CheckInput()
+        public void Tick()
         {
             if (Input.GetKey(KeyCode.LeftArrow))
             {

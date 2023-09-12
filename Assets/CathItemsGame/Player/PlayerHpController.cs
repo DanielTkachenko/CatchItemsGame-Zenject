@@ -23,12 +23,16 @@ namespace CatchItemsGame
             FallObjectController.DamageToPlayerNotify += ReduceHealth;
         }
 
+        public void SetHealth(float amount = 100)
+        {
+            _health = amount;
+            OnHealthChanged?.Invoke(_health);
+        }
+
         public void ReduceHealth(float damage)
         {
             _health -= damage;
-            
-            Debug.Log(_health);
-        
+
             _soundController.Play(SoundName.GetDamage);
             OnHealthChanged?.Invoke(_health);
         

@@ -6,11 +6,20 @@ namespace CatchItemsGame.Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<FallObjectConfig>().FromResource(ResourcesConst.FallObjectConfigPath).AsSingle().NonLazy();
-            Container.Bind<FallObjectSpawnConfig>().FromResource(ResourcesConst.FallObjectSpawnConfig).AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<FallObjectSpawner>().AsSingle();
-            Container.BindInterfacesAndSelfTo<FallObjectController>().AsSingle().NonLazy();
-            Container.BindMemoryPool<FallObjectView, FallObjectView.Pool>().WithInitialSize(10).FromComponentInNewPrefabResource(ResourcesConst.FallObjectViewPath);
+            Container.Bind<FallObjectConfig>()
+                .FromResource(ResourcesConst.FallObjectConfigPath)
+                .AsSingle()
+                .NonLazy();
+            Container.Bind<FallObjectSpawnConfig>()
+                .FromResource(ResourcesConst.FallObjectSpawnConfig)
+                .AsSingle()
+                .NonLazy();
+            Container.Bind<FallObjectSpawner>().AsSingle();
+            Container.Bind<FallObjectController>().AsSingle().NonLazy();
+            Container.BindMemoryPool<FallObjectView, FallObjectView.Pool>()
+                .WithInitialSize(10)
+                .FromComponentInNewPrefabResource(ResourcesConst.FallObjectViewPath)
+                .UnderTransformGroup("FallObjectPool");
         }
     }
 }

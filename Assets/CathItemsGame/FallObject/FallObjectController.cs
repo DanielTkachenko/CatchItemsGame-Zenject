@@ -5,34 +5,38 @@ using Zenject;
 
 namespace CatchItemsGame
 {
-    public class FallObjectController
+    public class FallObjectController : IFixedTickable
     {
         public static event Action<float> DamageToPlayerNotify;
         public static event Action<int> ScoresToPlayerNotify;
         
         private FallObjectAnimator _animator;
         private FallObjectConfig _fallObjectConfig;
+        private readonly TickableManager _tickableManager;
         private List<FallObjectView> _views;
         private FallObjectView.Pool _objectPool;
         
         private Vector3 _deltaVector = new Vector3(0, -0.001f, 0);
-        private float _minPositionY = -7f;
-
-        private bool isActive;
+        private float _minPositionY = -5f;
 
 
         public FallObjectController(
             FallObjectView.Pool objectPool,
-            FallObjectConfig fallObjectConfig
+            FallObjectConfig fallObjectConfig,
+            TickableManager tickableManager
         )
         {
-            TickableManager.FixedUpdateNotify += Tick;
             _fallObjectConfig = fallObjectConfig;
+            _tickableManager = tickableManager;
             _objectPool = objectPool;
             
             _views = new List<FallObjectView>();
             _animator = new FallObjectAnimator(this);
-            _animator.DeathAnimationEnded += Destroy;
+            _animator.DeathAnimationEnded += (view) =>
+            {
+                _objectPool.Despawn(view);
+                _views.Remove(view);
+            };
         }
 
         public FallObjectView Create(Vector3 position, FallObjectType type)
@@ -43,24 +47,19 @@ namespace CatchItemsGame
             _views.Add(view);
             view.OnCollisionEnter2DNotify += OnCollisionEnter2D;
             
-            _animator.Spawn(view);
+            _animator.SpawnAnimation(view);
 
             return view;
         }
 
         public void StartGame()
         {
-            isActive = true;
+            _tickableManager.AddFixed(this);
         }
 
         public void StopGame()
         {
-            isActive = false;
-            DestroyAll();
-        }
-
-        private void DestroyAll()
-        {
+            _tickableManager.RemoveFixed(this);
             foreach (var view in _views)
             {
                 if (view.gameObject.activeInHierarchy)
@@ -72,25 +71,23 @@ namespace CatchItemsGame
             _views.Clear();
         }
 
-        public void Destroy(FallObjectView view)
-        {
-            _objectPool.Despawn(view);
-            _views.Remove(view);
-        }
-
         void OnCollisionEnter2D(FallObjectView view, Collision2D collision2D)
         {
-            var player = collision2D.gameObject.GetComponent<PlayerView>();
-
-            if (player != null)
+            if (!view.isCatched)
             {
-                _animator.Death(view);
-                var points = _fallObjectConfig.Get(view.ObjectType).PointsPerObject;
-                ScoresToPlayerNotify?.Invoke(points);
+                var player = collision2D.gameObject.GetComponent<PlayerView>();
+                
+                if (player != null)
+                {
+                    _animator.DeathAnimation(view);
+                    var points = _fallObjectConfig.Get(view.ObjectType).PointsPerObject;
+                    ScoresToPlayerNotify?.Invoke(points);
+                    view.isCatched = true;
+                }
             }
         }
         
-        public void Tick()
+        public void FixedTick()
         {
             for (int i = 0; i < _views.Count; i++)
             {

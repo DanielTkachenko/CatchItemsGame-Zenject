@@ -7,15 +7,15 @@ namespace CatchItemsGame.Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<Camera>().FromComponentInNewPrefabResource("Main Camera").AsSingle().NonLazy();
-            Container.Bind<TickableManager>().FromComponentInNewPrefabResource(ResourcesConst.TickableManager).AsSingle().NonLazy();
+            Container.Bind<Camera>().FromComponentInNewPrefabResource(ResourcesConst.MainCamera).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<GameController>().AsSingle().NonLazy();
             
             SoundInstaller.Install(Container);
             UIInstaller.Install(Container);
             FallObjectInstaller.Install(Container);
             PlayerInstaller.Install(Container);
             
-            Container.BindInterfacesAndSelfTo<GameController>().AsSingle().NonLazy();
+            
         }
     }
 }
